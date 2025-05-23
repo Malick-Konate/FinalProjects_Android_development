@@ -25,4 +25,7 @@ class PostViewModel(private val repository: PostRepository) : ViewModel() {
     suspend fun refreshPosts() {
         _posts.value = repository.getAllPosts()
     }
+    suspend fun getPostsByUser(userId: Int): List<Post> {
+        return repository.getPostsByUserId(userId)
+    }
 }

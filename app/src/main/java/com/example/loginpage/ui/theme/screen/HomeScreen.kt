@@ -13,39 +13,28 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.loginpage.viewmodel.PostViewModel
 import androidx.compose.foundation.lazy.items
+import com.example.loginpage.viewmodel.UserViewModel
 
 
 @Composable
-fun HomeScreen(postViewModel: PostViewModel) {
-    val posts by postViewModel.posts.collectAsState()
+fun HomeScreen(navController: NavController, userViewModel: UserViewModel) {
+    val user by userViewModel.loggedInUser.collectAsState()
 
-    Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp)
-    ) {
-        Text("Campus Connect", style = MaterialTheme.typography.headlineMedium)
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        LazyColumn {
-            items(posts) { post ->
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(text = post.userName, style = MaterialTheme.typography.titleMedium)
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(text = post.content)
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Row {
-                            IconButton(onClick = { /* Like logic */ }) {
-                                Icon(imageVector = Icons.Default.Favorite, contentDescription = "Like")
-                            }
-                            Text(text = "${post.likeCount} Likes")
-                        }
-                    }
-                }
+    Scaffold { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text("Welcome, ${user?.fullName ?: "Guest"}!")
+            Spacer(modifier = Modifier.height(20.dp))
+            Button(onClick = { navController.navigate("feed") }) {
+                Text("View Feed")
+            }
+            Button(onClick = { navController.navigate("profile") }) {
+                Text("View Profile")
             }
         }
     }

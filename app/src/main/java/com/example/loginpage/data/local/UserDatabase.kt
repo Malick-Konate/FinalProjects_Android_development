@@ -4,33 +4,29 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.loginpage.model.Post
 import com.example.loginpage.model.User
 
-@Database(entities = [User::class], version = 1)
+@Database(entities = [User::class, Post::class], version = 1)
 abstract class UserDatabase : RoomDatabase() {
-    abstract fun userDao(): UserDAO
+    abstract fun userDao(): UserDAO //
+    abstract fun postDao(): PostDao //
 
     companion object {
-        // Volatile annotation ensures visibility across threads
         @Volatile
         private var INSTANCE: UserDatabase? = null
 
-        // This is the getInstance method the error refers to
         fun getInstance(context: Context): UserDatabase {
-            // Return instance if it exists, otherwise create it synchronized
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
-                    context.applicationContext, // Use application context
+                    context.applicationContext,
                     UserDatabase::class.java,
-                    "user_database" // Choose a name for your database file
-                )
-                    // Add database migrations here if needed using .addMigrations()
+                    "campus_database" //
+                ).fallbackToDestructiveMigration() //
                     .build()
-                INSTANCE = instance // Assign the created instance
-                // Return instance
+                INSTANCE = instance
                 instance
             }
         }
     }
-
 }

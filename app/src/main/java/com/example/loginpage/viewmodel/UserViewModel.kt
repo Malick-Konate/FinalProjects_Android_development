@@ -10,21 +10,20 @@ import kotlinx.coroutines.flow.StateFlow
 
 class UserViewModel(private val repository: UserRepository) : ViewModel() {
 
-    private val _loginState = MutableStateFlow<User?>(null)
-    val loginState: StateFlow<User?> = _loginState
+    private val _loggedInUser = MutableStateFlow<User?>(null)
+    val loggedInUser: StateFlow<User?> = _loggedInUser
 
-    fun register(fullName: String, email: String, password: String) {
+    fun login(email: String, password: String) {
         viewModelScope.launch {
-            val newUser = User(fullName = fullName, email = email, password = password)
-            repository.registerUser(newUser)
+            val user = repository.loginUser(email, password)
+            _loggedInUser.value = user
         }
     }
 
-    suspend fun login(email: String, password: String): User? {
-        return repository.loginUser(email, password)
-    }
-
-    suspend fun checkUserExists(email: String): Boolean {
-        return repository.checkUserExists(email)
+    fun register(fullName: String, email: String, password: String) {
+        viewModelScope.launch {
+            val user = User(fullName = fullName, email = email, password = password)
+            repository.registerUser(user)
+        }
     }
 }
